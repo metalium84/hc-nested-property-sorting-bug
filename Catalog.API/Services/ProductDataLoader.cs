@@ -8,11 +8,13 @@ internal static class ProductDataLoader
     [DataLoader]
     public static async Task<Dictionary<int, Product>> GetProductByIdAsync(
         IReadOnlyList<int> ids,
+        QueryContext<Product> queryContext,
         CatalogContext context,
         CancellationToken ct)
         => await context.Products
             .AsNoTracking()
             .Where(t => ids.Contains(t.Id))
+            .With(queryContext)
             .ToDictionaryAsync(t => t.Id, ct);
 
     [DataLoader]

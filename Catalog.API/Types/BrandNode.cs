@@ -15,6 +15,12 @@ public static partial class BrandNode
         ProductService productService,
         CancellationToken cancellationToken)
         => await productService.GetProductsByBrandAsync(brand.Id, pagingArgs, cancellationToken).ToConnectionAsync();
-
-    public static string Errors() => throw new Exception();
+    
+    [NodeResolver]
+    public static async Task<Brand?> GetBrandByIdAsync(
+        int id,
+        QueryContext<Brand> queryContext,
+        BrandService brandService,
+        CancellationToken cancellationToken)
+        => await brandService.GetBrandByIdAsync(id, queryContext, cancellationToken);
 }

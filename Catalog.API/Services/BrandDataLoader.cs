@@ -1,3 +1,5 @@
+using GreenDonut.Data;
+
 namespace eShop.Catalog.Services;
 
 [DataLoaderGroup("BrandBatchingContext")]
@@ -6,11 +8,13 @@ internal static class BrandDataLoader
     [DataLoader]
     public static async Task<Dictionary<int, Brand>> GetBrandByIdAsync(
         IReadOnlyList<int> ids,
+        QueryContext<Brand> queryContext,
         CatalogContext context,
         CancellationToken ct)
         => await context.Brands
             .AsNoTracking()
             .Where(t => ids.Contains(t.Id))
+            .With(queryContext)
             .ToDictionaryAsync(t => t.Id, ct);
     
     [DataLoader]

@@ -6,10 +6,10 @@ public sealed class BrandService(
     CatalogContext context, 
     IBrandBatchingContext batching)
 {
-    public async Task<Brand?> GetBrandByIdAsync(
-        int id, 
+    public async Task<Brand?> GetBrandByIdAsync(int id,
+        QueryContext<Brand> queryContext,
         CancellationToken ct = default)
-        => await batching.BrandById.LoadAsync(id, ct);
+        => await batching.BrandById.With(queryContext).LoadAsync(id, ct);
     
     public async Task<Brand?> GetBrandByNameAsync(
         string name, 
