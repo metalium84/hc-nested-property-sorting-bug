@@ -10,7 +10,8 @@ builder.Services
 builder.Services
     .AddScoped<BrandService>()
     .AddScoped<ProductService>()
-    .AddScoped<ProductTypeService>();
+    .AddScoped<ProductTypeService>()
+    .AddScoped<CompanyService>();
 
 builder.Services
     .AddGraphQLServer()

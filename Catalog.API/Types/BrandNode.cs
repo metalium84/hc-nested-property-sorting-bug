@@ -6,6 +6,13 @@ namespace eShop.Catalog.Types;
 [ObjectType<Brand>]
 public static partial class BrandNode
 {
+    public static async Task<Company?> GetCompanyAsync(
+        [Parent(requires: nameof(Brand.CompanyId))] Brand brand,
+        QueryContext<Company> queryContext,
+        CompanyService companyService, 
+        CancellationToken cancellationToken)
+        => await companyService.GetCompanyByIdAsync(brand.CompanyId, queryContext, cancellationToken);
+    
     [UsePaging]
     [UseSorting]
     [UseFiltering]

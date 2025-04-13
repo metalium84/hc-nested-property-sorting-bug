@@ -14,7 +14,7 @@ internal static class BrandDataLoader
         => await context.Brands
             .AsNoTracking()
             .Where(t => ids.Contains(t.Id))
-            .With(queryContext)
+            .With(queryContext.Include(t => t.Id))
             .ToDictionaryAsync(t => t.Id, ct);
     
     [DataLoader]

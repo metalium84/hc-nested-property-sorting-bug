@@ -9,11 +9,14 @@ public class CatalogContext(DbContextOptions<CatalogContext> options) : DbContex
     public DbSet<ProductType> ProductTypes => Set<ProductType>();
 
     public DbSet<Brand> Brands => Set<Brand>();
+    
+    public DbSet<Company> Companies => Set<Company>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new BrandEntityTypeConfiguration());
         builder.ApplyConfiguration(new ProductTypeEntityTypeConfiguration());
         builder.ApplyConfiguration(new ProductEntityTypeConfiguration());
+        builder.ApplyConfiguration(new CompanyEntityTypeConfiguration());
     }
 }

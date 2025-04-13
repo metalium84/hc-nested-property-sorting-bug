@@ -24,20 +24,29 @@ public sealed class CatalogContextSeed(
             var sourceJson = await File.ReadAllTextAsync(sourcePath);
             var sourceItems = JsonSerializer.Deserialize<ProductEntry[]>(sourceJson)!;
 
-            context.Brands.RemoveRange(context.Brands);
-            await context.Brands.AddRangeAsync(
-                sourceItems.Select(x => x.Brand).Distinct().Select(brandName => new Brand { Name = brandName, }));
-            logger.LogInformation("Seeded catalog with {NumBrands} brands", context.Brands.Count());
-
             context.ProductTypes.RemoveRange(context.ProductTypes);
             await context.ProductTypes.AddRangeAsync(
                 sourceItems.Select(x => x.Type).Distinct().Select(typeName => new ProductType { Name = typeName, }));
             logger.LogInformation("Seeded catalog with {NumTypes} types", context.ProductTypes.Count());
+            
+            context.Companies.RemoveRange(context.Companies);
+            await context.Companies.AddRangeAsync(
+                sourceItems.Select(x => x.Company).Distinct().Select(companyName => new Company { Name = companyName, }));
+            logger.LogInformation("Seeded catalog with {NumCompanies} types", context.Companies.Count());
 
             await context.SaveChangesAsync();
 
-            var brandIdsByName = await context.Brands.ToDictionaryAsync(x => x.Name, x => x.Id);
             var typeIdsByName = await context.ProductTypes.ToDictionaryAsync(x => x.Name, x => x.Id);
+            var companyIdsByName = await context.Companies.ToDictionaryAsync(x => x.Name, x => x.Id);
+            
+            context.Brands.RemoveRange(context.Brands);
+            await context.Brands.AddRangeAsync(
+                sourceItems.Select(x => new { x.Brand, x.Company}).DistinctBy(x => x.Brand).Select(brand => new Brand { Name = brand.Brand, CompanyId = companyIdsByName[brand.Company]}));
+            logger.LogInformation("Seeded catalog with {NumBrands} brands", context.Brands.Count());
+            
+            await context.SaveChangesAsync();
+            
+            var brandIdsByName = await context.Brands.ToDictionaryAsync(x => x.Name, x => x.Id);
 
             await context.Products.AddRangeAsync(
                 sourceItems.Select(source => new Product
@@ -67,5 +76,6 @@ public sealed class CatalogContextSeed(
         public required string Name { get; set; }
         public required string Description { get; set; }
         public required decimal Price { get; set; }
+        public required string Company { get; set; }
     }
 }
